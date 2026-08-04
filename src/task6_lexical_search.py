@@ -16,12 +16,29 @@ BM25 hoạt động thế nào:
 """
 
 import unicodedata
-from rank_bm25 import BM25Okapi
 from .task4_chunking_indexing import load_documents, chunk_documents
+
+try:
+    from rank_bm25 import BM25Okapi
+except ImportError:
+    BM25Okapi = None
 
 def strip_accents(s: str) -> str:
     s = s.replace('đ', 'd').replace('Đ', 'D')
     return unicodedata.normalize('NFKD', s).encode('ascii', 'ignore').decode('utf-8')
+
+
+def normalize_query(query: str) -> str:
+    """Chuẩn hoá dấu và thuật ngữ Anh–Việt thường gặp trong corpus RMIT."""
+    clean = strip_accents(query.lower())
+    aliases = {
+        "tuition": "hoc phi",
+        "fee": "hoc phi",
+        "scholarship": "hoc bong",
+        "accommodation": "ky tuc xa",
+        "library": "thu vien",
+    }
+    return " ".join([clean, *(aliases.get(token, "") for token in clean.split())])
 
 
 _BM25_INDEX = None
@@ -61,8 +78,20 @@ def build_bm25_index(corpus: list[dict]):
             if en in source or any(v in text for v in vi.split()):
                 full_text += f" {en}"
         tokenized_corpus.append(strip_accents(full_text).split())
-    bm25 = BM25Okapi(tokenized_corpus)
-    return bm25
+    if BM25Okapi is not None:
+        return BM25Okapi(tokenized_corpus)
+
+    # Fallback thuần Python: giữ pipeline chạy được khi máy demo chưa cài
+    # rank-bm25, với TF, IDF và chuẩn hoá độ dài tài liệu của BM25.
+    document_frequency: dict[str, int] = {}
+    for tokens in tokenized_corpus:
+        for token in set(tokens):
+            document_frequency[token] = document_frequency.get(token, 0) + 1
+    return {
+        "tokens": tokenized_corpus,
+        "df": document_frequency,
+        "avgdl": sum(len(tokens) for tokens in tokenized_corpus) / max(len(tokenized_corpus), 1),
+    }
 
 
 def get_bm25_index():
@@ -82,10 +111,27 @@ def lexical_search(query: str, top_k: int = 10) -> list[dict]:
         return []
 
     bm25 = get_bm25_index()
-    clean_query = strip_accents(query.lower())
+    clean_query = normalize_query(query)
     tokenized_query = clean_query.split()
 
-    scores = bm25.get_scores(tokenized_query)
+    if BM25Okapi is not None:
+        scores = bm25.get_scores(tokenized_query)
+    else:
+        import math
+        n_docs = len(bm25["tokens"])
+        k1, b = 1.5, 0.75
+        scores = []
+        for tokens in bm25["tokens"]:
+            doc_len = len(tokens)
+            score = 0.0
+            for token in tokenized_query:
+                tf = tokens.count(token)
+                if not tf:
+                    continue
+                df = bm25["df"].get(token, 0)
+                idf = math.log(1 + (n_docs - df + 0.5) / (df + 0.5))
+                score += idf * (tf * (k1 + 1)) / (tf + k1 * (1 - b + b * doc_len / bm25["avgdl"]))
+            scores.append(score)
 
     import numpy as np
     top_indices = np.argsort(scores)[::-1]
