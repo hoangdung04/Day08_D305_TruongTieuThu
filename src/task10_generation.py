@@ -45,13 +45,12 @@ LLM_MODEL = "openai/gpt-4o-mini"  # hoặc model ":free" nếu chưa có credit
 # SYSTEM PROMPT
 # =============================================================================
 
-SYSTEM_PROMPT = """Bạn là trợ lý trả lời câu hỏi về dịch vụ và chính sách đại học
-(học phí, học bổng, ký túc xá, thư viện, đăng ký học phần).
+SYSTEM_PROMPT = """Bạn là trợ lý trả lời câu hỏi về dịch vụ và chính sách đại học RMIT Việt Nam.
 
 Quy tắc bắt buộc:
 1. Chỉ sử dụng thông tin từ context được cung cấp — KHÔNG bịa đặt
 2. Mỗi khẳng định phải có trích dẫn ngay sau, ví dụ: [Tuition Fees, 2026]
-3. Nếu context không đủ thông tin → trả lời: "Tôi không thể xác minh thông tin này từ nguồn hiện có"
+3. Nếu context không đủ thông tin hoặc câu hỏi về trường/đơn vị khác không phải RMIT (ví dụ HUST, Bách Khoa...) → trả lời: "Tôi không thể xác minh thông tin này từ nguồn tài liệu RMIT hiện có."
 4. Trả lời bằng tiếng Việt, có cấu trúc rõ ràng theo đoạn văn
 5. Không suy luận hay mở rộng ngoài những gì được nêu trong context"""
 
@@ -117,6 +116,20 @@ def generate_with_citation(query: str, top_k: int = TOP_K) -> dict:
             "answer": "Thông tin được trích xuất trực tiếp từ các văn bản chính thức của RMIT Việt Nam (gồm **Quy định học phí**, **Quy chế học bổng**, **Quy định dịch vụ lưu trú KTX**, và **Tin tức thư viện/tuyển sinh**) được lưu trữ trong cơ sở dữ liệu của hệ thống.",
             "sources": [],
             "retrieval_source": "meta_info"
+        }
+
+    # 0.2 Kiểm tra câu hỏi về các trường đại học / tổ chức ngoài RMIT
+    other_unis = [
+        "hust", "bách khoa", "bach khoa", "neu", "ftu", "vnu", "fpt", "harvard",
+        "stanford", "đại học quốc gia", "dai hoc quoc gia", "tôn đức thắng",
+        "ton duc thang", "bách khoa hà nội", "bach khoa ha noi", "kinh tế quốc dân",
+        "ngân hàng", "ngan hang", "y hà nội", "y ha noi"
+    ]
+    if any(uni in clean_q for uni in other_unis) and not any(r in clean_q for r in ["rmit"]):
+        return {
+            "answer": "Tôi không thể xác minh thông tin này từ nguồn tài liệu RMIT hiện có.\n\nHệ thống hiện chỉ hỗ trợ tra cứu thông tin dịch vụ và chính sách của **RMIT Việt Nam** (không có dữ liệu về trường đại học khác).",
+            "sources": [],
+            "retrieval_source": "out_of_scope"
         }
 
     # Step 1: Retrieve
@@ -185,8 +198,14 @@ def generate_with_citation(query: str, top_k: int = TOP_K) -> dict:
             print(f"[Warning] LLM Call Fallback: {e}")
             answer = ""
 
-    # Synthesized Answer Fallback (Nếu thiếu API Key hoặc gọi API lỗi)
+    # Synthesized Answer Fallback (Nếu thiếu API Key hoặc gọi API lỗi / rate limit)
     if not answer:
+        if any(uni in clean_q for uni in other_unis) and not any(r in clean_q for r in ["rmit"]):
+            return {
+                "answer": "Tôi không thể xác minh thông tin này từ nguồn tài liệu RMIT hiện có.",
+                "sources": [],
+                "retrieval_source": "none"
+            }
         best_chunk = chunks[0]
         if any(w in clean_q for w in ["học phần", "môn học", "phần học"]):
             for c in chunks:
