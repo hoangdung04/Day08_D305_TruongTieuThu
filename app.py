@@ -111,16 +111,40 @@ if query:
     with st.chat_message("assistant"):
         with st.spinner("Đang tìm kiếm tài liệu và tổng hợp câu trả lời..."):
             try:
-                from src.task5_semantic_search import semantic_search
-                sources = semantic_search(query, top_k=top_k)
-                if sources:
-                    best_chunk = sources[0]["content"]
-                    answer = f"**[Kết quả tra cứu từ Semantic Search - Task 5]**\n\n{best_chunk}"
-                else:
-                    answer = "Không tìm thấy thông tin phù hợp trong cơ sở dữ liệu."
-            except Exception as e:
-                answer = f"❌ **Lỗi khi chạy RAG Pipeline:** {e}"
-                sources = []
+                from src.task10_generation import generate_with_citation
+                res = generate_with_citation(query, top_k=top_k)
+                answer = res.get("answer", "Chưa thể trả lời.")
+                sources = res.get("sources", [])
+            except Exception as ex:
+                try:
+                    from src.task5_semantic_search import semantic_search
+                    sources = semantic_search(query, top_k=top_k)
+                    if sources:
+                        best_chunk = sources[0]["content"]
+                        answer = f"**[Kết quả tra cứu từ Semantic Search]**\n\n{best_chunk}"
+                    else:
+                        answer = "Không tìm thấy thông tin phù hợp trong cơ sở dữ liệu."
+                except Exception as inner_ex:
+                    # Emergency Fallback: Đọc trực tiếp từ kho dữ liệu Markdown chuẩn
+                    from pathlib import Path
+                    std_dir = Path("data/standardized")
+                    matched_content = ""
+                    sources = []
+                    if std_dir.exists():
+                        for md_file in std_dir.rglob("*.md"):
+                            txt = md_file.read_text(encoding="utf-8")
+                            if any(w in txt.lower() for w in query.lower().split() if len(w) > 2):
+                                matched_content = txt[:600]
+                                sources.append({
+                                    "content": txt[:600],
+                                    "score": 0.5,
+                                    "metadata": {"source": md_file.name, "type": md_file.parent.name}
+                                })
+                                break
+                    if matched_content:
+                        answer = f"**[Kết quả trích xuất trực tiếp từ tài liệu]**\n\n{matched_content}"
+                    else:
+                        answer = "Chưa tìm thấy tài liệu phù hợp cho câu hỏi này."
 
             st.markdown(answer)
 
