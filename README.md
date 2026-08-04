@@ -550,19 +550,75 @@ run_dashboard()
 ### Kiến Trúc Hệ Thống
 
 ```
-[Vẽ diagram kiến trúc ở đây]
+                     ┌──────────────────────────────────────────┐
+                     │ 1. Data Collection & Processing          │
+                     │  - Legal Docs (PDF/DOCX)                 │
+                     │  - News Articles (JSON/Web Crawl)        │
+                     └────────────────────┬─────────────────────┘
+                                          │ MarkItDown Converter
+                                          ▼
+                     ┌──────────────────────────────────────────┐
+                     │ 2. Standardized Markdown (.md)           │
+                     └────────────────────┬─────────────────────┘
+                                          │ Recursive Chunking (size=800)
+                                          ▼
+                     ┌──────────────────────────────────────────┐
+                     │ 3. Indexing & Vector Database            │
+                     │  - Dense: ChromaDB (BAAI/bge-m3)         │
+                     │  - Sparse: BM25 Lexical Index            │
+                     └────────────────────┬─────────────────────┘
+                                          │
+    ┌─────────────────────────────────────┴─────────────────────────────────────┐
+    │ User Query (Chatbot UI / Streamlit)                                       │
+    └─────────────────────────────────────┬─────────────────────────────────────┘
+                                          │
+                                          ▼
+                     ┌──────────────────────────────────────────┐
+                     │ 4. Hybrid Retrieval                      │
+                     │  - Semantic Search (Cosine Similarity)   │
+                     │  - Lexical Search (BM25 Keyword Match)   │
+                     └────────────────────┬─────────────────────┘
+                                          │
+                                          ▼
+                     ┌──────────────────────────────────────────┐
+                     │ 5. RRF Reranking (Reciprocal Rank)      │
+                     └────────────────────┬─────────────────────┘
+                                          │
+                 ┌────────────────────────┴────────────────────────┐
+                 │ Top Cosine Score >= 0.48?                       │
+                 ├────────────────────────┬────────────────────────┤
+                 │ YES                    │ NO                     │
+                 ▼                        ▼                        
+┌─────────────────────────────────┐   ┌──────────────────────────┐
+│ Hybrid Top Chunks               │   │ PageIndex Fallback       │
+└────────────────┬────────────────┘   └────────────┬─────────────┘
+                 │                                 │
+                 └────────────────┬────────────────┘
+                                  │
+                                  ▼
+                     ┌──────────────────────────────────────────┐
+                     │ 6. Context Preparation & Reordering      │
+                     │  - Pattern: front + back[::-1]           │
+                     │  - Lost-in-the-middle Mitigation         │
+                     └────────────────────┬─────────────────────┘
+                                          │
+                                          ▼
+                     ┌──────────────────────────────────────────┐
+                     │ 7. Generation & Evaluation               │
+                     │  - OpenRouter / LLM Citation Prompt      │
+                     │  - Streamlit Chatbot UI (app.py)         │
+                     │  - RAGAS Evaluation (4 Metrics)          │
+                     └──────────────────────────────────────────┘
 ```
 
 ---
 
 ### Phân Công Công Việc
 
-| Thành viên | MSSV | Nhiệm vụ | Trạng thái |
-|-----------|------|----------|------------|
-| | | | |
-| | | | |
-| | | | |
-| | | | |
+| Thành viên | Vai trò | Nhiệm vụ | Trạng thái |
+|-----------|---------|----------|------------|
+| **Hoàng Mạnh Dũng** | Người 1 (Team Leader & RAG Architect) | Phụ trách Data Engineering, Vector DB, Retrieval Hybrid (Dense + BM25), RRF Reranking, PageIndex Fallback (Task 1–9) | ✅ Hoàn thành |
+| **Trần Việt Trường** | Người 2 (Frontend & QA Engineer) | Phụ trách Task 10 (Generation có Citation), Giao diện Chatbot Streamlit (`app.py`), Đánh giá RAGAS Benchmark (`eval_pipeline.py`, `results.md`) | ✅ Hoàn thành |
 
 ---
 

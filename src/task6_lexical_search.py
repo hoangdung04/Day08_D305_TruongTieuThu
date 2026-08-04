@@ -15,69 +15,99 @@ BM25 hoạt động thế nào:
     - k1=1.5 (term saturation), b=0.75 (length normalization)
 """
 
-from pathlib import Path
+import unicodedata
+from rank_bm25 import BM25Okapi
+from .task4_chunking_indexing import load_documents, chunk_documents
 
-# TODO: Load corpus từ data/standardized/ hoặc từ vector store
-CORPUS: list[dict] = []  # List of {'content': str, 'metadata': dict}
+def strip_accents(s: str) -> str:
+    s = s.replace('đ', 'd').replace('Đ', 'D')
+    return unicodedata.normalize('NFKD', s).encode('ascii', 'ignore').decode('utf-8')
+
+
+_BM25_INDEX = None
+_CORPUS_CACHE = None
+
+
+def get_corpus() -> list[dict]:
+    """Tải hoặc cache corpus dạng list chunk dicts."""
+    global _CORPUS_CACHE
+    if _CORPUS_CACHE is None:
+        docs = load_documents()
+        chunks = chunk_documents(docs)
+        _CORPUS_CACHE = chunks
+    return _CORPUS_CACHE
 
 
 def build_bm25_index(corpus: list[dict]):
     """
-    Xây dựng BM25 index từ corpus.
-
-    Args:
-        corpus: List of {'content': str, 'metadata': dict}
+    Xây dựng BM25 index từ corpus với hỗ trợ metadata và từ khóa song ngữ.
     """
-    # TODO: Implement BM25 index
-    #
-    # from rank_bm25 import BM25Okapi
-    #
-    # # Tokenize - có thể đơn giản split(), hoặc dùng underthesea cho tiếng Việt
-    # tokenized_corpus = [doc["content"].lower().split() for doc in corpus]
-    # bm25 = BM25Okapi(tokenized_corpus)
-    # return bm25
-    raise NotImplementedError("Implement build_bm25_index")
+    synonyms = {
+        "tuition": "học phí hoc phi tuition fee",
+        "fee": "học phí hoc phi phí phi fee",
+        "scholarship": "học bổng hoc bong scholarship",
+        "accommodation": "ký túc xá ky tuc xa chỗ ở cho o accommodation",
+        "library": "thư viện thu vien library",
+        "registration": "đăng ký dang ky registration enrol enrolment",
+        "course": "môn học mon hoc học phần hoc phan course",
+    }
+    tokenized_corpus = []
+    for doc in corpus:
+        text = doc["content"].lower()
+        meta = doc.get("metadata", {})
+        source = str(meta.get("source", "")).lower()
+        full_text = f"{text} {source}"
+        for en, vi in synonyms.items():
+            if en in source or any(v in text for v in vi.split()):
+                full_text += f" {en}"
+        tokenized_corpus.append(strip_accents(full_text).split())
+    bm25 = BM25Okapi(tokenized_corpus)
+    return bm25
+
+
+def get_bm25_index():
+    global _BM25_INDEX
+    if _BM25_INDEX is None:
+        corpus = get_corpus()
+        _BM25_INDEX = build_bm25_index(corpus)
+    return _BM25_INDEX
 
 
 def lexical_search(query: str, top_k: int = 10) -> list[dict]:
     """
     Tìm kiếm từ khóa sử dụng BM25.
-
-    Args:
-        query: Câu truy vấn
-        top_k: Số lượng kết quả tối đa
-
-    Returns:
-        List of {
-            'content': str,
-            'score': float,      # BM25 score
-            'metadata': dict
-        }
-        Sorted by score descending.
     """
-    # TODO: Implement lexical search
-    #
-    # tokenized_query = query.lower().split()
-    # scores = bm25.get_scores(tokenized_query)
-    #
-    # # Get top_k indices
-    # import numpy as np
-    # top_indices = np.argsort(scores)[::-1][:top_k]
-    #
-    # results = []
-    # for idx in top_indices:
-    #     if scores[idx] > 0:
-    #         results.append({
-    #             "content": CORPUS[idx]["content"],
-    #             "score": float(scores[idx]),
-    #             "metadata": CORPUS[idx]["metadata"]
-    #         })
-    # return results
-    raise NotImplementedError("Implement lexical_search")
+    corpus = get_corpus()
+    if not corpus:
+        return []
+
+    bm25 = get_bm25_index()
+    clean_query = strip_accents(query.lower())
+    tokenized_query = clean_query.split()
+
+    scores = bm25.get_scores(tokenized_query)
+
+    import numpy as np
+    top_indices = np.argsort(scores)[::-1]
+
+    results = []
+    for idx in top_indices:
+        score = float(scores[idx])
+        if score > 0 or len(results) == 0:
+            item = corpus[idx].copy()
+            results.append({
+                "content": item["content"],
+                "score": score,
+                "metadata": item.get("metadata", {})
+            })
+        if len(results) >= top_k:
+            break
+
+    results.sort(key=lambda x: x["score"], reverse=True)
+    return results[:top_k]
 
 
 if __name__ == "__main__":
-    # Test
     results = lexical_search("tuition fee payment methods", top_k=5)
     for r in results:
         print(f"[{r['score']:.3f}] {r['content'][:100]}...")

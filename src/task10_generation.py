@@ -147,18 +147,32 @@ def generate_with_citation(query: str, top_k: int = TOP_K) -> dict:
     context = format_context(reordered)
 
     # Step 4: Build prompt & call LLM if API Key available
-    api_key = os.getenv("OPENROUTER_API_KEY") or os.getenv("OPENAI_API_KEY")
+    openrouter_key = os.getenv("OPENROUTER_API_KEY")
+    openai_key = os.getenv("OPENAI_API_KEY")
+    gemini_key = os.getenv("GEMINI_API_KEY")
+
     answer = ""
 
-    if api_key:
+    if openrouter_key or openai_key or gemini_key:
         try:
             from openai import OpenAI
-            base_url = "https://openrouter.ai/api/v1" if os.getenv("OPENROUTER_API_KEY") else None
-            client = OpenAI(api_key=api_key, base_url=base_url)
+            if gemini_key and not (openrouter_key or openai_key):
+                client = OpenAI(
+                    api_key=gemini_key,
+                    base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+                )
+                model_name = "gemini-2.0-flash"
+            elif openrouter_key:
+                client = OpenAI(api_key=openrouter_key, base_url="https://openrouter.ai/api/v1")
+                model_name = LLM_MODEL
+            else:
+                client = OpenAI(api_key=openai_key)
+                model_name = LLM_MODEL
+
             user_message = f"Context:\n{context}\n\n---\n\nQuestion: {query}"
 
             response = client.chat.completions.create(
-                model=LLM_MODEL,
+                model=model_name,
                 messages=[
                     {"role": "system", "content": SYSTEM_PROMPT},
                     {"role": "user", "content": user_message}

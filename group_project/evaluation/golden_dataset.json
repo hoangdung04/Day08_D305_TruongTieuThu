@@ -1,17 +1,62 @@
 [
   {
-    "question": "Học phí hàng năm của chương trình Business tại RMIT Vietnam là bao nhiêu?",
-    "expected_answer": "Khoảng 375.840.000 VND mỗi năm (tùy chương trình cụ thể).",
-    "expected_context": "Trang Tuition Fees, mục Undergraduate Programs"
+    "question": "Học phí đại học tại RMIT Việt Nam là bao nhiêu?",
+    "ground_truth": "Mức học phí trung bình mỗi năm học dao động từ 300,000,000 VNĐ đến 330,000,000 VNĐ tùy theo ngành học."
   },
   {
-    "question": "Học phí được thanh toán theo hình thức nào?",
-    "expected_answer": "Thanh toán theo từng học kỳ, tính theo từng môn học đã đăng ký.",
-    "expected_context": "Trang Tuition Fees, mục Payment Structure"
+    "question": "Hạn chót đóng học phí các học kỳ tại RMIT là khi nào?",
+    "ground_truth": "Hạn cuối đóng học phí Học kỳ 1 là 15/03, Học kỳ 2 là 15/07, Học kỳ 3 là 15/11."
   },
   {
-    "question": "Trường có cung cấp ký túc xá trong khuôn viên không?",
-    "expected_answer": "Không — trường không cung cấp chỗ ở trong khuôn viên, nhưng có đội ngũ hỗ trợ sinh viên tìm chỗ ở gần trường.",
-    "expected_context": "Trang Accommodation Services"
+    "question": "Phí phạt nếu sinh viên đóng học phí trễ hạn là bao nhiêu?",
+    "ground_truth": "Nếu đóng học phí trễ hạn sau 7 ngày, sinh viên sẽ bị tính phí trễ hạn 1,000,000 VNĐ/tuần."
+  },
+  {
+    "question": "Những loại học bổng nào được cung cấp tại RMIT Việt Nam?",
+    "ground_truth": "Học bổng Thành tựu Thanh niên (50-100%), Học bổng Thành tích học tập xuất sắc (100%), Học bổng Khuyến học ngành Công nghệ & Sáng tạo (25-50%)."
+  },
+  {
+    "question": "Điều kiện GPA lớp 12 để xin học bổng RMIT là bao nhiêu?",
+    "ground_truth": "Điểm trung bình học tập (GPA) lớp 12 phải đạt từ 8.5/10 trở lên."
+  },
+  {
+    "question": "Yêu cầu trình độ tiếng Anh tối thiểu để xét duyệt học bổng RMIT?",
+    "ground_truth": "IELTS Academic tối thiểu 6.5 (không kỹ năng nào dưới 6.0) hoặc TOEFL iBT 79+."
+  },
+  {
+    "question": "Sinh viên nhận học bổng cần duy trì GPA tối thiểu bao nhiêu?",
+    "ground_truth": "Sinh viên phải duy trì GPA tối thiểu 3.0/4.0 trong suốt các học kỳ."
+  },
+  {
+    "question": "Giá thuê phòng Ký túc xá RMIT Nam Sài Gòn là bao nhiêu?",
+    "ground_truth": "Giá thuê phòng dao động từ 4,500,000 VNĐ đến 9,000,000 VNĐ / tháng (đã bao gồm chi phí điện, nước, wifi)."
+  },
+  {
+    "question": "Giờ đóng cửa ký túc xá RMIT là mấy giờ?",
+    "ground_truth": "Ký túc xá đóng cửa lúc 23:00 hằng đêm."
+  },
+  {
+    "question": "Quy trình đăng ký phòng Ký túc xá RMIT như thế nào?",
+    "ground_truth": "Sinh viên nộp đơn trực tuyến qua Residential Portal RMIT trước khai giảng 30 ngày và đặt cọc 1 tháng tiền phòng."
+  },
+  {
+    "question": "Làm sao để đặt phòng học nhóm ở Thư viện RMIT?",
+    "ground_truth": "Sinh viên có thể đặt phòng học nhóm trực tuyến qua ứng dụng RMIT Library Portal."
+  },
+  {
+    "question": "Thư viện RMIT có những dịch vụ hỗ trợ nghiên cứu nào?",
+    "ground_truth": "Thư viện cung cấp các buổi workshop phần mềm trích dẫn EndNote, Mendeley và tư vấn hỗ trợ nghiên cứu 1-on-1 với thủ thư."
+  },
+  {
+    "question": "Trung tâm Student Wellbeing hỗ trợ sinh viên những gì?",
+    "ground_truth": "Cung cấp các dịch vụ tư vấn tâm lý miễn phí và bảo mật 1-on-1, hội thao kỹ năng kiểm soát stress và hỗ trợ sinh viên khuyết tật."
+  },
+  {
+    "question": "Hạn cuối cùng để Thêm/Xóa môn học (Add/Drop Deadline) HK1 2024?",
+    "ground_truth": "Hạn cuối thêm/xóa môn là 23:59 ngày 15 tháng 02 năm 2024."
+  },
+  {
+    "question": "Hệ thống nào dùng để đăng ký môn học trực tuyến tại RMIT?",
+    "ground_truth": "Sinh viên truy cập hệ thống Enrolment Online (EO) qua tài khoản sinh viên."
   }
 ]
