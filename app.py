@@ -84,10 +84,8 @@ for msg in st.session_state.messages:
             with st.expander(f"📚 Nguồn tham khảo ({len(msg['sources'])} chunks)"):
                 for i, src in enumerate(msg["sources"], 1):
                     meta = src.get("metadata", {})
-                    source_name = meta.get("source", "Unknown")
-                    doc_type = meta.get("type", "unknown")
-                    score = src.get("score", 0)
-                    st.markdown(f"**[{i}] {source_name}** `{doc_type}` | score: `{score:.4f}`")
+                    ret_method = src.get("source", "RRF Rerank")
+                    st.markdown(f"**[{i}] {source_name}** `{doc_type}` | **Alg:** `{ret_method}` | score: `{score:.4f}`")
                     st.text(src.get("content", "")[:300] + "...")
                     st.divider()
 
@@ -155,7 +153,8 @@ if query:
                         source_name = meta.get("source", "Unknown")
                         doc_type = meta.get("type", "unknown")
                         score = src.get("score", 0)
-                        st.markdown(f"**[{i}] {source_name}** `{doc_type}` | score: `{score:.4f}`")
+                        ret_method = src.get("source", "RRF Rerank")
+                        st.markdown(f"**[{i}] {source_name}** `{doc_type}` | **Alg:** `{ret_method}` | score: `{score:.4f}`")
                         st.text(src.get("content", "")[:300] + "...")
                         st.divider()
 
