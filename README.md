@@ -630,8 +630,6 @@ pip install -r requirements.txt
 
 # Chạy app
 streamlit run app.py
-# hoặc
-chainlit run app.py
 ```
 
 ---
