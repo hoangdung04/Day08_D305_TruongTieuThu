@@ -62,41 +62,47 @@ BẮT BUỘC TRẢ VỀ DUY NHẤT 1 ĐỐI TƯỢNG JSON (không thêm văn b�
   "precision": <float từ 0.0 đến 1.0>
 }}
 """
-    try:
-        from openai import OpenAI
-        if gemini_key and not (openrouter_key or openai_key):
-            client = OpenAI(
-                api_key=gemini_key,
-                base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
-            )
-            model_name = "gemini-2.0-flash"
-        elif openrouter_key:
-            client = OpenAI(api_key=openrouter_key, base_url="https://openrouter.ai/api/v1")
-            model_name = "openai/gpt-4o-mini"
-        else:
-            client = OpenAI(api_key=openai_key)
-            model_name = "gpt-4o-mini"
+    import time
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            from openai import OpenAI
+            if gemini_key and not (openrouter_key or openai_key):
+                client = OpenAI(
+                    api_key=gemini_key,
+                    base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+                )
+                model_name = "gemini-2.0-flash"
+            elif openrouter_key:
+                client = OpenAI(api_key=openrouter_key, base_url="https://openrouter.ai/api/v1")
+                model_name = "openai/gpt-4o-mini"
+            else:
+                client = OpenAI(api_key=openai_key)
+                model_name = "gpt-4o-mini"
 
-        response = client.chat.completions.create(
-            model=model_name,
-            messages=[
-                {"role": "system", "content": "You are a precise LLM Judge evaluating RAG systems. Output strictly valid JSON."},
-                {"role": "user", "content": judge_prompt}
-            ],
-            temperature=0.0,
-            response_format={"type": "json_object"}
-        )
-        raw_content = response.choices[0].message.content.strip()
-        data = json.loads(raw_content)
-        return {
-            "faithfulness": float(data.get("faithfulness", 0.8)),
-            "relevance": float(data.get("relevance", 0.8)),
-            "recall": float(data.get("recall", 0.8)),
-            "precision": float(data.get("precision", 0.8))
-        }
-    except Exception as e:
-        print(f"  [Notice] LLM Judge call fallback: {e}")
-        return None
+            response = client.chat.completions.create(
+                model=model_name,
+                messages=[
+                    {"role": "system", "content": "You are a precise LLM Judge evaluating RAG systems. Output strictly valid JSON."},
+                    {"role": "user", "content": judge_prompt}
+                ],
+                temperature=0.0,
+                response_format={"type": "json_object"}
+            )
+            raw_content = response.choices[0].message.content.strip()
+            data = json.loads(raw_content)
+            return {
+                "faithfulness": float(data.get("faithfulness", 0.8)),
+                "relevance": float(data.get("relevance", 0.8)),
+                "recall": float(data.get("recall", 0.8)),
+                "precision": float(data.get("precision", 0.8))
+            }
+        except Exception as e:
+            if "429" in str(e) and attempt < max_retries - 1:
+                time.sleep(5 * (attempt + 1))
+                continue
+            print(f"  [Notice] LLM Judge call fallback: {e}")
+            return None
 
 
 def run_evaluation():
