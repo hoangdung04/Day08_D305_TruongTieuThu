@@ -111,17 +111,29 @@ def generate_with_citation(query: str, top_k: int = TOP_K) -> dict:
         except Exception:
             pass
 
+    # 0.1 Xử lý câu hỏi về nguồn gốc thông tin của Chatbot
+    if any(phrase in clean_q for phrase in ["lay thong tin", "lấy thông tin", "nguon o dau", "nguồn ở đâu", "lay tu dau", "lấy từ đâu", "lay o dau", "lấy ở đâu"]):
+        return {
+            "answer": "Thông tin được trích xuất trực tiếp từ các văn bản chính thức của RMIT Việt Nam (gồm **Quy định học phí**, **Quy chế học bổng**, **Quy định dịch vụ lưu trú KTX**, và **Tin tức thư viện/tuyển sinh**) được lưu trữ trong cơ sở dữ liệu của hệ thống.",
+            "sources": [],
+            "retrieval_source": "meta_info"
+        }
+
     # Step 1: Retrieve
     chunks = retrieve(query, top_k=top_k)
 
     # Kiểm tra mức độ liên quan của kết quả tìm kiếm với câu hỏi
-    rmit_keywords = ["hoc phi", "học phí", "hoc bong", "học bổng", "ky tuc xa", "ký túc xá", 
-                     "thu vien", "thư viện", "rmit", "phong", "phòng", "dang ky", "đăng ký", 
-                     "mon hoc", "môn học", "chinh sach", "chính sách", "tin tuc", "tin tức"]
+    rmit_keywords = [
+        "hoc phi", "học phí", "hoc bong", "học bổng", "ky tuc xa", "ký túc xá", "ktx",
+        "thu vien", "thư viện", "rmit", "phong", "phòng", "dang ky", "đăng ký", 
+        "mon hoc", "môn học", "chinh sach", "chính sách", "tin tuc", "tin tức",
+        "luu tru", "lưu trú", "cho o", "chỗ ở", "gia", "giá", "chi phi", "chi phí",
+        "o dau", "ở đâu", "the nao", "thế nào", "nhu nao", "như thế nào", "han", "hạn"
+    ]
     has_rmit_kw = any(kw in clean_q for kw in rmit_keywords)
     best_score = chunks[0].get("score", 0.0) if chunks else 0.0
 
-    if not chunks or (best_score < 0.15 and not has_rmit_kw):
+    if not chunks or (best_score < 0.05 and not has_rmit_kw):
         return {
             "answer": "Tôi không thể xác minh thông tin này từ nguồn tài liệu RMIT hiện có.\n\nHệ thống hỗ trợ trả lời các câu hỏi về: Học phí, Học bổng, Dịch vụ lưu trú (KTX), Thư viện và Tin tức tuyển sinh tại RMIT.",
             "sources": [],
