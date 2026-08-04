@@ -559,7 +559,7 @@ run_dashboard()
 
 | Thành viên | MSSV | Nhiệm vụ | Trạng thái |
 |-----------|------|----------|------------|
-| | | | |
+| Trần Việt Trường | 2A202601467 | Hoàn thiện pipeline RAG cá nhân (Task 1–10) và kiểm thử | Hoàn thành |
 | | | | |
 | | | | |
 | | | | |

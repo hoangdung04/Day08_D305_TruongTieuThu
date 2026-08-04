@@ -79,7 +79,7 @@ Xem code mẫu (DeepEval/RAGAS/TruLens) chi tiết trong `README.md` gốc mục
 
 | Thành viên | MSSV | Nhiệm vụ | Trạng thái |
 |-----------|------|----------|------------|
-| | | | |
+| Trần Việt Trường | 2A202601467 | Tích hợp RAG pipeline, retrieval, generation có citation và evaluation | Hoàn thành |
 | | | | |
 | | | | |
 | | | | |
