@@ -1,19 +1,19 @@
-# Tuition Fees Rmit
+# Học phí RMIT Việt Nam
 
-QUY DINH HOC PHI VA PHUONG THUC THANH TOAN RMIT VIET NAM 2024
+QUY ĐỊNH HỌC PHÍ VÀ PHƯƠNG THỨC THANH TOÁN RMIT VIỆT NAM 2024
 
-1. Chinh sach hoc phi chung:
-- Hoc phi dai hoc tai RMIT Viet Nam duoc tinh theo hoc phan \(credit point\).
-- Muc hoc phi trung binh moi nam hoc dao dong tu 300,000,000 VND den 330,000,000 VND tuy theo nganh hoc.
-- Sinh vien co the dong hoc phi theo tung hoc ky \(3 ky / nam\) hoac dong theo nam hoc.
+1. Chính sách học phí chung:
+- Học phí đại học tại RMIT Việt Nam được tính theo tín chỉ (credit point).
+- Mức học phí trung bình mỗi năm học dao động từ 300.000.000 VNĐ đến 330.000.000 VNĐ tùy theo ngành học.
+- Sinh viên có thể đóng học phí theo từng học kỳ (3 kỳ/năm) hoặc đóng theo năm học.
 
-2. Han chot dong hoc phi:
-- Hoc ky 1: Han cuoi dong hoc phi la ngay 15 thang 03.
-- Hoc ky 2: Han cuoi dong hoc phi la ngay 15 thang 07.
-- Hoc ky 3: Han cuoi dong hoc phi la ngay 15 thang 11.
-- Neu dong hoc phi tre han sau 7 ngay, sinh vien se bi tinh phi tre han 1,000,000 VND/tuan.
+2. Hạn chót đóng học phí:
+- Học kỳ 1: Hạn cuối đóng học phí là ngày 15 tháng 03.
+- Học kỳ 2: Hạn cuối đóng học phí là ngày 15 tháng 07.
+- Học kỳ 3: Hạn cuối đóng học phí là ngày 15 tháng 11.
+- Nếu đóng học phí trễ hạn sau 7 ngày, sinh viên sẽ bị tính phí trễ hạn 1.000.000 VNĐ/tuần.
 
-3. Phuong thuc thanh toan:
-- Chuyen khoan ngan hang qua cong thanh toan sinh vien RMIT Student Portal.
-- Thanh toan qua the tin dung quoc te \(Visa, MasterCard\) hoac ATM noi dia.
-- Ho tro tra gop hoc phi lai suat 0% qua cac ngan hang lien ket.
+3. Phương thức thanh toán:
+- Chuyển khoản ngân hàng qua cổng thanh toán sinh viên RMIT Student Portal.
+- Thanh toán qua thẻ tín dụng quốc tế (Visa, MasterCard) hoặc ATM nội địa.
+- Hỗ trợ trả góp học phí lãi suất 0% qua các ngân hàng liên kết.

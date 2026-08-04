@@ -1,17 +1,17 @@
-# Thu vien RMIT Vietnam mo rong khong gian hoc tap 24/7 va kho sach so
+# Thư viện RMIT Việt Nam mở rộng không gian học tập 24/7 và kho sách số
 
 **Source:** https://www.rmit.edu.vn/news/vi/2024/library-services-expansion
 **Crawled:** 2026-08-04T10:10:55.452644
 
 ---
 
-# Thu vien RMIT Vietnam mo rong khong gian hoc tap 24/7 va kho sach so
+# Thư viện RMIT Việt Nam mở rộng không gian học tập 24/7 và kho sách số
 
-Thu vien RMIT Vietnam Nam Sai Gon va Ha Noi vua chinh thuc nang cap he thong tra cuu va mo rong khong gian hoc tap phuc vu sinh vien.
+Thư viện RMIT Việt Nam Nam Sài Gòn và Hà Nội vừa chính thức nâng cấp hệ thống tra cứu và mở rộng không gian học tập phục vụ sinh viên.
 
-## Cac tien ich noi bat:
-- **Khong gian mo 24/7**: Phong hoc nhom va khu vuc yen tinh mo cua phuc vu sinh vien trong suot mua thi.
-- **Kho sach so va truy cap CSDL**: Sinh vien co the truy cap hon 300,000 cuon sach dien tu (e-books) va cac tap chi khoa hoc quoc te tu IEEE, ACM, Springer qua tai khoan RMIT.
-- **Dich vu ho tro nghien cuu**: Thu vien cung cap cac buoi workshop phan mem trich dan EndNote, Mendeley va tu van ho tro nghien cuu 1-on-1 voi thu thu chuyên nganh.
+## Các tiện ích nổi bật:
+- **Không gian mở 24/7**: Phòng học nhóm và khu vực yên tĩnh mở cửa phục vụ sinh viên trong suốt mùa thi.
+- **Kho sách số và truy cập CSDL**: Sinh viên có thể truy cập hơn 300.000 cuốn sách điện tử (e-books) và các tạp chí khoa học quốc tế từ IEEE, ACM, Springer qua tài khoản RMIT.
+- **Dịch vụ hỗ trợ nghiên cứu**: Thư viện cung cấp các buổi workshop phần mềm trích dẫn EndNote, Mendeley và tư vấn hỗ trợ nghiên cứu 1-on-1 với thủ thư chuyên ngành.
 
-Sinh vien co the dat phong hoc nhom truc tuyen qua ung dung RMIT Library Portal.
+Sinh viên có thể đặt phòng học nhóm trực tuyến qua ứng dụng RMIT Library Portal.

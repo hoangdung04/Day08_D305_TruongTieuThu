@@ -1,20 +1,20 @@
-# Ngay hoi Viec lam va Ket noi Doanh nghiep RMIT Career Fair 2024
+# Ngày hội Việc làm và Kết nối Doanh nghiệp RMIT Career Fair 2024
 
 **Source:** https://www.rmit.edu.vn/news/vi/2024/career-fair-internship-opportunities
 **Crawled:** 2026-08-04T10:10:55.452644
 
 ---
 
-# Ngay hoi Viec lam va Ket noi Doanh nghiep RMIT Career Fair 2024
+# Ngày hội Việc làm và Kết nối Doanh nghiệp RMIT Career Fair 2024
 
-Phong Ket noi Doanh nghiep va Viec lam sinh vien RMIT to chuc Ngay hoi Viec lam Career Fair 2024 voi su tham gia cua hon 50 doanh nghiệp va tap doan da quoc gia.
+Phòng Kết nối Doanh nghiệp và Việc làm sinh viên RMIT tổ chức Ngày hội Việc làm Career Fair 2024 với sự tham gia của hơn 50 doanh nghiệp và tập đoàn đa quốc gia.
 
-## Thong tin su kien:
-- **Thoi gian**: 09:00 - 16:00, Ngay 20 tháng 10 năm 2024.
-- **Dia diem**: Hall A, RMIT Nam Sai Gon Campus.
-- **Doi tac tham gia**: Unilever, Shopee, HSBC, Intel, Bosch, VNG, PwC va FPT.
+## Thông tin sự kiện:
+- **Thời gian**: 09:00 - 16:00, Ngày 20 tháng 10 năm 2024.
+- **Địa điểm**: Hall A, RMIT Nam Sài Gòn Campus.
+- **Đối tác tham gia**: Unilever, Shopee, HSBC, Intel, Bosch, VNG, PwC và FPT.
 
-## Quyen loi sinh vien:
-- Ung tuyen truc tiep cac vi tri thuc tap sinh (Internship) va Chuyen vien tap su (Management Trainee).
-- Sua CV va phong van thu 1-on-1 voi cac chuyên gia HR tuyen dung.
-- Tham gia cac buoi Panel Discussion ve xu huong viec lam va tri tue nhan tao (AI) trong doanh nghiep.
+## Quyền lợi sinh viên:
+- Ứng tuyển trực tiếp các vị trí thực tập sinh (Internship) và Chuyên viên tập sự (Management Trainee).
+- Sửa CV và phỏng vấn thử 1-on-1 với các chuyên gia HR tuyển dụng.
+- Tham gia các buổi Panel Discussion về xu hướng việc làm và trí tuệ nhân tạo (AI) trong doanh nghiệp.
