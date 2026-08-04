@@ -530,10 +530,10 @@ run_dashboard()
 
 #### Deliverable Evaluation
 
-- [ ] File `group_project/evaluation/golden_dataset.json` — 15+ cặp Q&A
-- [ ] File `group_project/evaluation/eval_pipeline.py` — script chạy evaluation
-- [ ] File `group_project/evaluation/results.md` — bảng điểm + phân tích
-- [ ] So sánh A/B ít nhất 2 configs
+- [x] File `group_project/evaluation/golden_dataset.json` — 15+ cặp Q&A
+- [x] File `group_project/evaluation/eval_pipeline.py` — script chạy evaluation
+- [x] File `group_project/evaluation/results.md` — bảng điểm + phân tích
+- [x] So sánh A/B ít nhất 2 configs
 
 ---
 
@@ -615,10 +615,10 @@ run_dashboard()
 
 ### Phân Công Công Việc
 
-| Thành viên | Vai trò | Nhiệm vụ | Trạng thái |
-|-----------|---------|----------|------------|
-| **Hoàng Mạnh Dũng** | Người 1 (Team Leader & RAG Architect) | Phụ trách Data Engineering, Vector DB, Retrieval Hybrid (Dense + BM25), RRF Reranking, PageIndex Fallback (Task 1–9) | ✅ Hoàn thành |
-| **Trần Việt Trường** | Người 2 (Frontend & QA Engineer) | Phụ trách Task 10 (Generation có Citation), Giao diện Chatbot Streamlit (`app.py`), Đánh giá RAGAS Benchmark (`eval_pipeline.py`, `results.md`) | ✅ Hoàn thành |
+| Thành viên | MHV / MSSV | Vai trò | Nhiệm vụ | Trạng thái |
+|-----------|------------|---------|----------|------------|
+| **Hoàng Mạnh Dũng** | `2A202601213` | Người A (Team Leader & Data/Dense Search Dev) | Phụ trách Task 1 (Thu thập PDF), Task 2 (Crawl News), Task 3 (Convert Markdown), Task 4 (Chunking & Indexing ChromaDB), Task 5 (Semantic Dense Search), Phát triển Giao diện Chatbot Streamlit (`app.py`) | ✅ Hoàn thành |
+| **Trần Việt Trường** | `2A202601467` | Người B (Sparse Search, Pipeline & QA Engineer) | Phụ trách Task 6 (Lexical BM25), Task 7 (RRF Reranking), Task 8 (PageIndex Fallback), Task 9 (Retrieval Pipeline & Threshold 0.48), Task 10 (Citation Generation & Reordering), Soạn `golden_dataset.json` (15 Q&A) & RAGAS Eval `eval_pipeline.py` (`results.md`) | ✅ Hoàn thành |
 
 ---
 
