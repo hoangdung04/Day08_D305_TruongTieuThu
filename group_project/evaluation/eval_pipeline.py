@@ -9,7 +9,14 @@ Pipeline chạy đánh giá 4 chỉ số chất lượng cho hệ thống RAG:
 """
 
 import json
+import sys
 from pathlib import Path
+
+# Add project root to sys.path
+PROJECT_ROOT = Path(__file__).parent.parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 from src.task9_retrieval_pipeline import retrieve
 from src.task10_generation import generate_with_citation
 
@@ -18,9 +25,83 @@ GOLDEN_DATASET_PATH = EVAL_DIR / "golden_dataset.json"
 RESULTS_PATH = EVAL_DIR / "results.md"
 
 
+def evaluate_with_llm_judge(question: str, ground_truth: str, answer: str, context_chunks: list[dict]) -> dict:
+    """
+    Sử dụng LLM Judge (Gemini / OpenAI API) đánh giá 4 chỉ số RAGAS chuẩn:
+    - Faithfulness: Tỷ lệ khẳng định trong câu trả lời được suy ra trực tiếp từ context.
+    - Answer Relevance: Tỷ lệ phản hồi giải quyết đúng trọng tâm câu hỏi.
+    - Context Recall: Tỷ lệ thông tin Ground Truth có trong retrieved context.
+    - Context Precision: Tỷ lệ các chunk hữu ích trong retrieved context.
+    """
+    import os
+    import json
+
+    gemini_key = os.getenv("GEMINI_API_KEY")
+    openrouter_key = os.getenv("OPENROUTER_API_KEY")
+    openai_key = os.getenv("OPENAI_API_KEY")
+
+    if not (gemini_key or openrouter_key or openai_key):
+        return None
+
+    context_str = "\n---\n".join([f"Chunk {i+1}: {c.get('content', '')}" for i, c in enumerate(context_chunks)])
+
+    judge_prompt = f"""Bạn là RAGAS LLM Judge chuyên nghiệp đánh giá chất lượng hệ thống RAG theo thang điểm 0.0 đến 1.0 cho 4 chỉ số.
+
+DỮ LIỆU ĐÁNH GIÁ:
+- Câu hỏi (Question): {question}
+- Ground Truth (Đáp án chuẩn): {ground_truth}
+- Answer (Câu trả lời hệ thống): {answer}
+- Retrieved Context (Tài liệu trích xuất):
+{context_str}
+
+BẮT BUỘC TRẢ VỀ DUY NHẤT 1 ĐỐI TƯỢNG JSON (không thêm văn bản dẫn dắt):
+{{
+  "faithfulness": <float từ 0.0 đến 1.0>,
+  "relevance": <float từ 0.0 đến 1.0>,
+  "recall": <float từ 0.0 đến 1.0>,
+  "precision": <float từ 0.0 đến 1.0>
+}}
+"""
+    try:
+        from openai import OpenAI
+        if gemini_key and not (openrouter_key or openai_key):
+            client = OpenAI(
+                api_key=gemini_key,
+                base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+            )
+            model_name = "gemini-2.0-flash"
+        elif openrouter_key:
+            client = OpenAI(api_key=openrouter_key, base_url="https://openrouter.ai/api/v1")
+            model_name = "openai/gpt-4o-mini"
+        else:
+            client = OpenAI(api_key=openai_key)
+            model_name = "gpt-4o-mini"
+
+        response = client.chat.completions.create(
+            model=model_name,
+            messages=[
+                {"role": "system", "content": "You are a precise LLM Judge evaluating RAG systems. Output strictly valid JSON."},
+                {"role": "user", "content": judge_prompt}
+            ],
+            temperature=0.0,
+            response_format={"type": "json_object"}
+        )
+        raw_content = response.choices[0].message.content.strip()
+        data = json.loads(raw_content)
+        return {
+            "faithfulness": float(data.get("faithfulness", 0.8)),
+            "relevance": float(data.get("relevance", 0.8)),
+            "recall": float(data.get("recall", 0.8)),
+            "precision": float(data.get("precision", 0.8))
+        }
+    except Exception as e:
+        print(f"  [Notice] LLM Judge call fallback: {e}")
+        return None
+
+
 def run_evaluation():
     """
-    Chạy evaluation pipeline trên bộ dữ liệu golden_dataset.json.
+    Chạy evaluation pipeline trên bộ dữ liệu golden_dataset.json với RAGAS LLM Judge.
     """
     if not GOLDEN_DATASET_PATH.exists():
         print(f"⚠ Không tìm thấy {GOLDEN_DATASET_PATH}")
@@ -30,7 +111,7 @@ def run_evaluation():
         dataset = json.load(f)
 
     print("=" * 60)
-    print("Running Group Project Evaluation Pipeline")
+    print("Running Group Project Evaluation Pipeline (RAGAS LLM Judge)")
     print(f"Total test cases: {len(dataset)}")
     print("=" * 60)
 
@@ -48,23 +129,27 @@ def run_evaluation():
         ans = res["answer"]
         sources = res["sources"]
 
-        # Tính toán các chỉ số mô phỏng RAGAS dựa trên câu trả lời và context
-        words_q = set(q.lower().split())
-        words_gt = set(gt.lower().split())
-        words_ans = set(ans.lower().split())
+        # Thử đánh giá bằng RAGAS LLM Judge
+        llm_metrics = evaluate_with_llm_judge(q, gt, ans, sources)
 
-        # Context Recall: % từ trong Ground Truth xuất hiện trong retrieved context
-        retrieved_text = " ".join([s.get("content", "") for s in sources]).lower()
-        recall = sum(1 for w in words_gt if w in retrieved_text) / (len(words_gt) or 1)
+        if llm_metrics:
+            faithfulness = llm_metrics["faithfulness"]
+            relevance = llm_metrics["relevance"]
+            recall = llm_metrics["recall"]
+            precision = llm_metrics["precision"]
+            eval_mode = "LLM Judge"
+        else:
+            # Fallback tính toán chỉ số dựa trên từ khóa nếu chưa cấu hình LLM Key
+            words_q = set(q.lower().split())
+            words_gt = set(gt.lower().split())
+            words_ans = set(ans.lower().split())
 
-        # Context Precision: % chunks có chứa từ khóa của câu hỏi
-        precision = sum(1 for s in sources if any(w in s.get("content", "").lower() for w in words_q)) / (len(sources) or 1)
-
-        # Faithfulness: % từ trong câu trả lời xuất hiện trong retrieved context
-        faithfulness = sum(1 for w in words_ans if w in retrieved_text) / (len(words_ans) or 1) if words_ans else 1.0
-
-        # Answer Relevance: % từ của câu hỏi xuất hiện trong câu trả lời
-        relevance = sum(1 for w in words_q if w in words_ans) / (len(words_q) or 1)
+            retrieved_text = " ".join([s.get("content", "") for s in sources]).lower()
+            recall = sum(1 for w in words_gt if w in retrieved_text) / (len(words_gt) or 1)
+            precision = sum(1 for s in sources if any(w in s.get("content", "").lower() for w in words_q)) / (len(sources) or 1)
+            faithfulness = sum(1 for w in words_ans if w in retrieved_text) / (len(words_ans) or 1) if words_ans else 1.0
+            relevance = sum(1 for w in words_q if w in words_ans) / (len(words_q) or 1)
+            eval_mode = "Heuristic Fallback"
 
         total_faithfulness += faithfulness
         total_relevance += relevance

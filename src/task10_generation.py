@@ -187,8 +187,14 @@ def generate_with_citation(query: str, top_k: int = TOP_K) -> dict:
 
     # Synthesized Answer Fallback (Nếu thiếu API Key hoặc gọi API lỗi)
     if not answer:
-        top_src = chunks[0].get("metadata", {}).get("source", "Tài liệu RMIT")
-        main_content = chunks[0].get("content", "").strip()
+        best_chunk = chunks[0]
+        if any(w in clean_q for w in ["học phần", "môn học", "phần học"]):
+            for c in chunks:
+                if any(w in c.get("content", "").lower() for w in ["học phần", "môn học", "enrolment"]):
+                    best_chunk = c
+                    break
+        top_src = best_chunk.get("metadata", {}).get("source", "Tài liệu RMIT")
+        main_content = best_chunk.get("content", "").strip()
         answer = f"**[Trả lời trích dẫn từ nguồn chuẩn]**\n\nDựa trên tài liệu [{top_src}]:\n\n{main_content}"
 
     retrieval_source = chunks[0].get("source", "hybrid") if chunks else "hybrid"

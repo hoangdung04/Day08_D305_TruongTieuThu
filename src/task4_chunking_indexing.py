@@ -21,9 +21,9 @@ CHUNK_SIZE = 800
 CHUNK_OVERLAP = 100
 CHUNKING_METHOD = "recursive"
 
-# EMBEDDING_MODEL: all-MiniLM-L6-v2 (384 dim, siêu nhẹ, chạy cực nhanh và tối ưu RAM)
-EMBEDDING_MODEL = "all-MiniLM-L6-v2"
-EMBEDDING_DIM = 384
+# EMBEDDING_MODEL: BAAI/bge-m3 (1024 dim, multilingual SOTA embedding model)
+EMBEDDING_MODEL = "BAAI/bge-m3"
+EMBEDDING_DIM = 1024
 
 VECTOR_STORE = "chromadb"
 COLLECTION_NAME = "university_services_docs"

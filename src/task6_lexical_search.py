@@ -49,7 +49,7 @@ def build_bm25_index(corpus: list[dict]):
         "accommodation": "ký túc xá ky tuc xa chỗ ở cho o accommodation",
         "library": "thư viện thu vien library",
         "registration": "đăng ký dang ky registration enrol enrolment",
-        "course": "môn học mon hoc học phần hoc phan course",
+        "course": "môn học mon hoc học phần hoc phan phần học phan hoc course",
     }
     tokenized_corpus = []
     for doc in corpus:
